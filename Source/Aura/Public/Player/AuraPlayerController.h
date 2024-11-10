@@ -39,6 +39,6 @@ private:
 
 	void CursorTrace();
 
-	IEnemyInterface* LastActor;
-	IEnemyInterface* CurActor;
+	TObjectPtr<IEnemyInterface> LastActor;
+	TObjectPtr<IEnemyInterface> CurActor;
 };
