@@ -1,4 +1,6 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
+
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 void UOverlayWidgetController::BroadcastInitValues()
@@ -17,16 +19,25 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	if (const UAuraAttributeSet* AS = Cast<UAuraAttributeSet>(AttributeSet))
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetHealthAttribute())
-		.AddUObject(this, &UOverlayWidgetController::HealthChanged);
+		                      .AddUObject(this, &UOverlayWidgetController::HealthChanged);
 
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetMaxHealthAttribute())
-		.AddUObject(this, &UOverlayWidgetController::MaxHealthChanged);
+		                      .AddUObject(this, &UOverlayWidgetController::MaxHealthChanged);
 
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetManaAttribute())
-		.AddUObject(this, &UOverlayWidgetController::ManaChanged);
+		                      .AddUObject(this, &UOverlayWidgetController::ManaChanged);
 
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetMaxManaAttribute())
-		.AddUObject(this, &UOverlayWidgetController::MaxManaChanged);
+		                      .AddUObject(this, &UOverlayWidgetController::MaxManaChanged);
+
+		Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->OnEffectAssetTagsApplied.AddLambda(
+			[](const FGameplayTagContainer& Tags)
+			{
+				for(const FGameplayTag& Tag : Tags)
+				{
+					
+				}
+			});
 	}
 }
 
@@ -43,7 +54,6 @@ void UOverlayWidgetController::MaxHealthChanged(const FOnAttributeChangeData& Da
 void UOverlayWidgetController::ManaChanged(const FOnAttributeChangeData& Data) const
 {
 	OnManaChanged.Broadcast(Data.NewValue);
-
 }
 
 void UOverlayWidgetController::MaxManaChanged(const FOnAttributeChangeData& Data) const
