@@ -45,7 +45,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetParams(const FWidgetControllerParams& InWidgetControllerParams);
 
+	/*初始化完成后，从AS中拿到属性值并利用广播传递给UI*/
+	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitValues();
+	/*绑定回调函数到各个属性变化*/
 	virtual void BindCallbacksToDependencies();
 
 protected:

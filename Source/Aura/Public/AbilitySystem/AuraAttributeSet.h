@@ -11,6 +11,8 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+//DECLARE_DELEGATE_RetVal(FGameplayAttribute, FAttributeSignature);
+
 USTRUCT()
 struct FEffectProperties
 {
@@ -48,6 +50,10 @@ struct FEffectProperties
 };
 
 
+template<typename R, typename... Args>
+using TStaticFuncPtr = R(*)(Args...);
+
+
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
 {
@@ -60,6 +66,10 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+	//TMap<FGameplayTag, FAttributeSignature> TagsToAttribute;
+	TMap<FGameplayTag,  TStaticFuncPtr<FGameplayAttribute>> TagsToAttribute;
+	
 
 	//Vital
 
