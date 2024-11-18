@@ -28,6 +28,12 @@ void AAuraCharacterBase::BeginPlay()
 	
 }
 
+FVector AAuraCharacterBase::GetWeaponSocketLocation()
+{
+	checkf(Weapon, TEXT("Weapon is not set in %s"), *GetName());
+	return Weapon->GetSocketLocation(WeaponSocketName);
+}
+
 void AAuraCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> Effect, const float Level) const
 {
 	FGameplayEffectContextHandle Ctx = GetAbilitySystemComponent()->MakeEffectContext();
