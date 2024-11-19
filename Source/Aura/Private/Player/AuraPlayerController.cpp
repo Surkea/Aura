@@ -52,10 +52,11 @@ void AAuraPlayerController::SetupInputComponent()
 
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	checkf(InputConfig, TEXT("InputConfig is not set in %s"), *GetName());
-
 	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityTagPressed,
 	                                       &ThisClass::AbilityTagReleased, &ThisClass::AbilityTagHeld);
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -137,30 +138,31 @@ void AAuraPlayerController::AbilityTagReleased(FGameplayTag InputTag)
 		return;
 	}
 
-	if (bAimingTarget) //瞄准目标响应release
+	if (GetAuraAbilitySystemComponent() == nullptr) return;
+	GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
+	
+	if (!bAimingTarget && !bShiftKeyDown)
 	{
-		if (GetAuraAbilitySystemComponent() == nullptr) return;
-		GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
-		return;
+		/*if (FollowTime <= ShortPressTS)
+	{*/
+		const APawn* ControlledPawn = GetPawn<APawn>();
+		if (const UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+			this, ControlledPawn->GetActorLocation(), CachedDestination))
+		{
+			PathSpline->ClearSplinePoints();
+			for (const FVector& Point : NavPath->PathPoints)
+			{
+				PathSpline->AddSplinePoint(Point, ESplineCoordinateSpace::World);
+			}
+			CachedDestination = NavPath->PathPoints.Last();
+			bAutoRunning = true;
+		}
+		/*}*/
+		FollowTime = 0.f;
+		bAimingTarget = false;
 	}
 
-	/*if (FollowTime <= ShortPressTS)
-	{*/
-	const APawn* ControlledPawn = GetPawn<APawn>();
-	if (const UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
-		this, ControlledPawn->GetActorLocation(), CachedDestination))
-	{
-		PathSpline->ClearSplinePoints();
-		for (const FVector& Point : NavPath->PathPoints)
-		{
-			PathSpline->AddSplinePoint(Point, ESplineCoordinateSpace::World);
-		}
-		CachedDestination = NavPath->PathPoints.Last();
-		bAutoRunning = true;
-	}
-	/*}*/
-	FollowTime = 0.f;
-	bAimingTarget = false;
+	
 }
 
 void AAuraPlayerController::AbilityTagHeld(FGameplayTag InputTag)
@@ -172,7 +174,7 @@ void AAuraPlayerController::AbilityTagHeld(FGameplayTag InputTag)
 		return;
 	}
 	//按下左键
-	if (bAimingTarget) //瞄准目标释放技能
+	if (bAimingTarget || bShiftKeyDown) //瞄准目标释放技能或自由施法
 	{
 		if (GetAuraAbilitySystemComponent() == nullptr) return;
 		GetAuraAbilitySystemComponent()->AbilityInputTagHeld(InputTag);

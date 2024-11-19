@@ -18,4 +18,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> ProjectileEffectClass;
+
+	UFUNCTION(BlueprintCallable, Category="Projectile")
+	void SpawnProjectile(const FVector& TargetProjectileLocation);
 };

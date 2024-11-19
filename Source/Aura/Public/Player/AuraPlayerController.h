@@ -38,6 +38,13 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
+	void ShiftPressed() { bShiftKeyDown = true; };
+	void ShiftReleased() { bShiftKeyDown = false; };
+	bool bShiftKeyDown = false;
+
 	void Move(const FInputActionValue& InputActionValue);
 
 	void CursorTrace();
@@ -68,7 +75,7 @@ private:
 	bool bAutoRunning = false;
 	//lmb press的时候是否选中了目标
 	bool bAimingTarget = false;
-	
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> PathSpline;
 	UPROPERTY(EditDefaultsOnly)

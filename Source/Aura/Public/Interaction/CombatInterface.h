@@ -24,4 +24,7 @@ public:
 	virtual int32 GetPlayerLevel();
 
 	virtual FVector GetWeaponSocketLocation();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdateFacingTarget(const FVector& TargetLocation);
 };
