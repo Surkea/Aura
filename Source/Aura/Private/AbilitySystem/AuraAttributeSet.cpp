@@ -80,7 +80,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if(Attr == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0,GetMaxHealth()));
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Health: %f in %s"), GetHealth(), *Props.TarAvatarActor->GetName()));
 	}
 	else if(Attr == GetManaAttribute())
 	{
