@@ -4,6 +4,7 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -85,7 +86,30 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		SetMana(FMath::Clamp(GetMana(),0,GetMaxMana()));
 	}
-	
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (LocalIncomingDamage > 0.f)
+		{
+			const float NeaHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NeaHealth, 0.f, GetMaxHealth()));
+			const bool bFatal = GetHealth() <= 0.f;
+			if (!bFatal)//受到伤害
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TarASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+			else//死亡逻辑
+			{
+				if (ICombatInterface* Interface = Cast<ICombatInterface>(Props.TarAvatarActor))
+				{
+					Interface->Die();
+				}
+			}
+		}
+	}
 }
 
 void UAuraAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const

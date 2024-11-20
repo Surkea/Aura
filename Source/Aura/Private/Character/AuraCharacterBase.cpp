@@ -29,6 +29,36 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
+void AAuraCharacterBase::Die()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	MulticastHandleDeath_Implementation();
+}
+
+void AAuraCharacterBase::MulticastHandleDeath_Implementation()
+{
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	Weapon->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	Weapon->AddImpulse(FVector(0.f, 0.f, 200.f), NAME_None, true);
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Block);
+	GetMesh()->AddImpulse(FVector(0.f, 0.f, 4000.f), NAME_None, true);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	Dissolve();
+}
+
 // Called when the game starts or when spawned
 void AAuraCharacterBase::BeginPlay()
 {
@@ -68,6 +98,22 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 	ASC->AddCharacterAbilities(StartAbilities);
 }
 
+
+void AAuraCharacterBase::Dissolve()
+{
+	if (IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* InstanceDynamic = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, InstanceDynamic);
+		StartDissolveTimeline(InstanceDynamic);
+	}
+	if (IsValid(WeaponDissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* InstanceDynamic = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, InstanceDynamic);
+		StartWeaponDissolveTimeline(InstanceDynamic);
+	}
+}
 
 void AAuraCharacterBase::InitAbilityActorInfo()
 {

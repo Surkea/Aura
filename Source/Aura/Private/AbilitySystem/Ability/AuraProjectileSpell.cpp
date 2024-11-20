@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -33,8 +34,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetProjectileLocati
 			if (const UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
 				GetAvatarActorFromActorInfo()))
 			{
-				Projectile->EffectSpecHandle = ASC->MakeOutgoingSpec(ProjectileEffectClass, GetAbilityLevel(),
-				                                                     ASC->MakeEffectContext());
+				const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(ProjectileEffectClass, GetAbilityLevel(),ASC->MakeEffectContext());
+				const FAuraGameplayTags Tags = FAuraGameplayTags::Get();
+				const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+				UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Spec, Tags.Meta_Damage, ScaledDamage);
+				Projectile->EffectSpecHandle = Spec;
 			}
 			Projectile->FinishSpawning(SpawnTransform);
 		}
