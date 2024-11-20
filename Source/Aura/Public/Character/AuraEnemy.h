@@ -21,7 +21,8 @@ public:
 
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
-	virtual void Die() override;
+
+	virtual void OnDie_Implementation() override;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;

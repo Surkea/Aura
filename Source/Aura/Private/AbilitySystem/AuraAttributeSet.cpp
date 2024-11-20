@@ -5,7 +5,9 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -94,6 +96,13 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		{
 			const float NeaHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NeaHealth, 0.f, GetMaxHealth()));
+			//show damage number
+			if (Props.SrcCharacter != Props.TarCharacter)
+			{
+				AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SrcCharacter,0));
+				PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, false);
+			}
+			
 			const bool bFatal = GetHealth() <= 0.f;
 			if (!bFatal)//受到伤害
 			{
@@ -103,9 +112,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			}
 			else//死亡逻辑
 			{
-				if (ICombatInterface* Interface = Cast<ICombatInterface>(Props.TarAvatarActor))
+				if (const ICombatInterface* Interface = Cast<ICombatInterface>(Props.TarAvatarActor))
 				{
-					Interface->Die();
+					Interface->Execute_OnDie(Props.TarAvatarActor);
 				}
 			}
 		}

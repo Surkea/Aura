@@ -27,6 +27,12 @@ public:
 	AAuraPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
 
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float Damage, ACharacter* Target, bool bIsCritical = false);
+
+	UFUNCTION(BlueprintImplementableEvent, DisplayName="ShowDamageNumber")
+	void BP_ShowDamageNumber(float Damage, ACharacter* Target, bool bIsCritical);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;

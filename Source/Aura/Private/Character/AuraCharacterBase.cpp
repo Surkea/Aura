@@ -34,11 +34,12 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
-void AAuraCharacterBase::Die()
+void AAuraCharacterBase::OnDie_Implementation()
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	MulticastHandleDeath_Implementation();
 }
+
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {

@@ -38,12 +38,13 @@ void AAuraEnemy::UnHighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
-void AAuraEnemy::Die()
+void AAuraEnemy::OnDie_Implementation()
 {
 	SetLifeSpan(DieLifeSpan);
 	HealthBar->SetVisibility(false);
-	Super::Die();
+	Super::OnDie_Implementation();
 }
+
 
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {

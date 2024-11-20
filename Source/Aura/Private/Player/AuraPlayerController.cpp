@@ -6,6 +6,7 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "Components/SplineComponent.h"
+#include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -23,6 +24,11 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 	CursorTrace();
 	AutoRun();
+}
+
+void AAuraPlayerController::ShowDamageNumber_Implementation(float Damage, ACharacter* Target, bool bIsCritical)
+{
+	if (IsValid(Target)) BP_ShowDamageNumber(Damage, Target, bIsCritical);
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -140,7 +146,7 @@ void AAuraPlayerController::AbilityTagReleased(FGameplayTag InputTag)
 
 	if (GetAuraAbilitySystemComponent() == nullptr) return;
 	GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
-	
+
 	if (!bAimingTarget && !bShiftKeyDown)
 	{
 		/*if (FollowTime <= ShortPressTS)
@@ -154,15 +160,13 @@ void AAuraPlayerController::AbilityTagReleased(FGameplayTag InputTag)
 			{
 				PathSpline->AddSplinePoint(Point, ESplineCoordinateSpace::World);
 			}
-			CachedDestination = NavPath->PathPoints.Last();
+			if (NavPath->PathPoints.Num() > 0) CachedDestination = NavPath->PathPoints.Last();
 			bAutoRunning = true;
 		}
 		/*}*/
 		FollowTime = 0.f;
 		bAimingTarget = false;
 	}
-
-	
 }
 
 void AAuraPlayerController::AbilityTagHeld(FGameplayTag InputTag)

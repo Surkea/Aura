@@ -27,7 +27,8 @@ public:
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 
-	virtual void Die() override;
+
+	virtual void OnDie_Implementation() override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
@@ -75,6 +76,8 @@ protected:
 	void StartDissolveTimeline(UMaterialInstanceDynamic* InstanceDynamic);
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* InstanceDynamic);
+
+	
 
 private:
 	virtual void InitAbilityActorInfo();
