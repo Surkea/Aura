@@ -111,7 +111,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			//show damage number
 			if (Props.SrcCharacter != Props.TarCharacter)
 			{
-				AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SrcCharacter,0));
+				AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SrcCharacter->Controller);
 				const bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
 				const bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 				PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, bIsBlocked, bIsCritical);

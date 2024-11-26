@@ -17,13 +17,13 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetProjectileLocation)
 {
-	if (const bool bIsServer = HasAuthority(&CurrentActivationInfo))
+	if (const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority())
 	{
 		if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 		{
 			const FVector SpawnLocation = CombatInterface->GetWeaponSocketLocation();
 			FRotator SpawnRotation = (TargetProjectileLocation - SpawnLocation).Rotation();
-			SpawnRotation.Pitch = 0.f;
+			//SpawnRotation.Pitch = 0.f;
 			const FTransform SpawnTransform = FTransform(SpawnRotation, SpawnLocation);
 
 			AActor* OwningActor = GetOwningActorFromActorInfo();

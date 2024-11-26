@@ -28,7 +28,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::ShowDamageNumber_Implementation(float Damage, ACharacter* Target, bool bIsBlocked, bool bIsCritical)
 {
-	if (IsValid(Target)) BP_ShowDamageNumber(Damage, Target, bIsBlocked, bIsCritical);
+	if (IsValid(Target) && IsLocalController()) BP_ShowDamageNumber(Damage, Target, bIsBlocked, bIsCritical);
 }
 
 void AAuraPlayerController::BeginPlay()
