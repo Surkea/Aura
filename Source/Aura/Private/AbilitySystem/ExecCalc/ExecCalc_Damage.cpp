@@ -1,6 +1,8 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "AbilitySystem/AuraAbilityTypes.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 struct AuraDamageStatics
@@ -85,12 +87,18 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	//Get origin damage value
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Meta_Damage, true);
 
+	// Get the context
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	
 	//Block check
-	if (bool bIsBlocked = FMath::RandRange(1, 100) <= TarBlockChance)
+	const bool bIsBlocked = FMath::RandRange(1, 100) <= TarBlockChance;
+	if (bIsBlocked)
 	{
 		Damage /= 2.f;
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Blocked"));
 	}
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bIsBlocked);
+
 
 	//Armor and Penetration
 	const float EffectiveArmor = TarArmor * (100 - SrcArmorPenetration) / 100;
@@ -99,11 +107,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	//Critical Hit
 	const float EffectiveCriticalHitChance = FMath::Clamp(SrcCriticalHitChance - TarCriticalHitResistance * 0.2, 0.f,
 	                                                      100.f);
-	if (FMath::RandRange(1, 100) <= EffectiveCriticalHitChance)
+	const bool bIsCritical = (FMath::RandRange(1, 100) <= EffectiveCriticalHitChance) && !bIsBlocked;
+	if (bIsCritical)
 	{
 		Damage = Damage * 2 + SrcCriticalHitDamage;
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Critical Hit"));
 	}
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCritical);
+
 
 	//Apply damage
 	const FGameplayModifierEvaluatedData DamageData(UAuraAttributeSet::GetIncomingDamageAttribute(),

@@ -28,10 +28,10 @@ public:
 	virtual void PlayerTick(float DeltaTime) override;
 
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float Damage, ACharacter* Target, bool bIsCritical = false);
+	void ShowDamageNumber(float Damage, ACharacter* Target, bool bIsBlocked, bool bIsCritical);
 
 	UFUNCTION(BlueprintImplementableEvent, DisplayName="ShowDamageNumber")
-	void BP_ShowDamageNumber(float Damage, ACharacter* Target, bool bIsCritical);
+	void BP_ShowDamageNumber(float Damage, ACharacter* Target, bool bIsBlocked, bool bIsCritical);
 
 protected:
 	virtual void BeginPlay() override;

@@ -3,6 +3,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -100,7 +101,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			if (Props.SrcCharacter != Props.TarCharacter)
 			{
 				AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SrcCharacter,0));
-				PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, false);
+				const bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+				const bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+				PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, bIsBlocked, bIsCritical);
 			}
 			
 			const bool bFatal = GetHealth() <= 0.f;
