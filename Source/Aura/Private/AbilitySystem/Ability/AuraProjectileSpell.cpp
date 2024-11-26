@@ -38,10 +38,15 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetProjectileLocati
 				CtxHandle.SetAbility(this);
 				CtxHandle.AddSourceObject(Projectile);
 				
-				const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(ProjectileEffectClass, GetAbilityLevel(),CtxHandle);
+				const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(),CtxHandle);
 				const FAuraGameplayTags Tags = FAuraGameplayTags::Get();
-				const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-				UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Spec, Tags.Meta_Damage, ScaledDamage);
+
+				for (auto& Pair:DamageTypes)
+				{
+					const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+					UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Spec, Pair.Key, ScaledDamage);
+				}
+				
 				Projectile->EffectSpecHandle = Spec;
 			}
 			Projectile->FinishSpawning(SpawnTransform);

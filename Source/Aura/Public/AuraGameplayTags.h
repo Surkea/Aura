@@ -30,6 +30,13 @@ struct FAuraGameplayTags
 	FGameplayTag Attributes_Secondary_HealthRegeneration;
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 
+	//Resistances
+	FGameplayTag Attributes_Resistances_Physical;
+	FGameplayTag Attributes_Resistances_Fire;
+	FGameplayTag Attributes_Resistances_Lightning;
+	FGameplayTag Attributes_Resistances_Arcane;
+	
+
 	//Input
 	FGameplayTag Input_LMB;
 	FGameplayTag Input_RMB;
@@ -39,7 +46,12 @@ struct FAuraGameplayTags
 	FGameplayTag Input_4;
 
 	//Meta
-	FGameplayTag Meta_Damage;
+	FGameplayTag Meta_Damage_Physical;
+	FGameplayTag Meta_Damage_Fire;
+	FGameplayTag Meta_Damage_Lightning;
+	FGameplayTag Meta_Damage_Arcane;
+
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
 	//Effects
 	FGameplayTag Effects_HitReact; 
