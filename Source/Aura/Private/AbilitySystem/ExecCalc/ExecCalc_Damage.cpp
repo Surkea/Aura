@@ -127,7 +127,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		                                                           ResistanceValue);
 		ResistanceValue = FMath::Clamp(ResistanceValue, 0.f, 100.f);
 		
-		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTagToResistance.Key) * (100 - ResistanceValue) / 100;
+		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTagToResistance.Key, false) * (100 - ResistanceValue) / 100;
 		Damage += DamageTypeValue;
 	}
 
