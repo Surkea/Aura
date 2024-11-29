@@ -4,6 +4,7 @@
 #include "Character/AuraCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
@@ -40,6 +41,16 @@ void AAuraCharacterBase::OnDie_Implementation()
 	MulticastHandleDeath_Implementation();
 }
 
+bool AAuraCharacterBase::GetIsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatarActor_Implementation()
+{
+	return this;
+}
+
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
@@ -58,6 +69,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	Dissolve();
+	bDead = true;
 }
 
 // Called when the game starts or when spawned
@@ -67,10 +79,27 @@ void AAuraCharacterBase::BeginPlay()
 	
 }
 
-FVector AAuraCharacterBase::GetWeaponSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	checkf(Weapon, TEXT("Weapon is not set in %s"), *GetName());
-	return Weapon->GetSocketLocation(WeaponSocketName);
+	const FAuraGameplayTags& AuraTags = FAuraGameplayTags::Get();
+	if (MontageTag.MatchesTag(AuraTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponSocketName);
+	}
+	if(MontageTag.MatchesTag(AuraTags.Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if(MontageTag.MatchesTag(AuraTags.Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	return FVector::ZeroVector;
+}
+
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
 }
 
 void AAuraCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> Effect, const float Level) const

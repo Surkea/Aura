@@ -111,10 +111,19 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			//show damage number
 			if (Props.SrcCharacter != Props.TarCharacter)
 			{
-				AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SrcCharacter->Controller);
-				const bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
-				const bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-				PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, bIsBlocked, bIsCritical);
+				if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SrcCharacter->Controller))
+				{
+					const bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+					const bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+					PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, bIsBlocked, bIsCritical);
+					return;
+				}
+				if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TarCharacter->Controller))
+				{
+					const bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+					const bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+					PC->ShowDamageNumber(LocalIncomingDamage, Props.TarCharacter, bIsBlocked, bIsCritical);	
+				}
 			}
 			
 			const bool bFatal = GetHealth() <= 0.f;

@@ -51,11 +51,15 @@ struct FAuraGameplayTags
 	FGameplayTag Meta_Damage_Lightning;
 	FGameplayTag Meta_Damage_Arcane;
 
+	FGameplayTag Abilities_Attack;
+
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
 	//Effects
-	FGameplayTag Effects_HitReact; 
-
+	FGameplayTag Effects_HitReact;
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_LeftHand;
+	FGameplayTag Montage_Attack_RightHand;
 
 private:
 	static FAuraGameplayTags GameplayTags;
