@@ -61,6 +61,12 @@ struct FAuraGameplayTags
 	FGameplayTag Montage_Attack_LeftHand;
 	FGameplayTag Montage_Attack_RightHand;
 
+	FGameplayTag TaggedMontage_Attack_1;
+	FGameplayTag TaggedMontage_Attack_2;
+	FGameplayTag TaggedMontage_Attack_3;
+	FGameplayTag TaggedMontage_Attack_4;
+
+
 private:
 	static FAuraGameplayTags GameplayTags;
 };

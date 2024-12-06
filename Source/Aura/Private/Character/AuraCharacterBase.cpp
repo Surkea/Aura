@@ -129,6 +129,23 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 }
 
 
+UNiagaraSystem* AAuraCharacterBase::GetBloodEffect_Implementation()
+{
+	return BloodFX;
+}
+
+FTaggedMontage AAuraCharacterBase::GetTaggedMontageByDataTag_Implementation(const FGameplayTag& MontageDataTag)
+{
+	for (FTaggedMontage Montage : AttackMontages)
+	{
+		if (Montage.MontageDataTag.MatchesTag(MontageDataTag))
+		{
+			return Montage;
+		}
+	}
+	return FTaggedMontage();
+}
+
 void AAuraCharacterBase::Dissolve()
 {
 	if (IsValid(DissolveMaterialInstance))

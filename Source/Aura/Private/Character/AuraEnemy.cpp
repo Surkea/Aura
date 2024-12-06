@@ -64,6 +64,7 @@ void AAuraEnemy::OnDie_Implementation()
 {
 	SetLifeSpan(DieLifeSpan);
 	HealthBar->SetVisibility(false);
+	if (AuraAIController) AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	Super::OnDie_Implementation();
 }
 
